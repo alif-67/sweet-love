@@ -1773,40 +1773,211 @@
       border-color: var(--pink-500);
     }
 
-    /* ปุ่มลบรูปจริงออกจากสมุด */
-    .polaroid-del-btn {
+    /* ปุ่มแก้ไข ✏️ และลบรูป 🗑️ มุมซ้ายบนของการ์ดโพลารอยด์ */
+    .polaroid-card-tools {
       position: absolute;
       top: 8px;
       left: 8px;
       z-index: 4;
-      width: 31px;
-      height: 31px;
+      display: flex;
+      gap: 5px;
+      opacity: 0.92;
+      transition: opacity 0.2s ease, transform 0.18s ease;
+    }
+
+    .polaroid-card:hover .polaroid-card-tools,
+    .polaroid-card:focus-within .polaroid-card-tools {
+      opacity: 1;
+    }
+
+    .polaroid-mini-action {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 1px solid rgba(214, 69, 96, 0.35);
-      background: rgba(255, 255, 255, 0.88);
-      color: var(--danger-text);
+      border: 1.5px solid rgba(255, 179, 198, 0.85);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink-main);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.85rem;
-      opacity: 0;
-      transition: opacity 0.2s ease, transform 0.18s ease, background 0.18s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      transition: transform 0.16s ease, background 0.16s ease;
     }
 
-    .polaroid-card:hover .polaroid-del-btn,
-    .polaroid-card:focus-within .polaroid-del-btn {
-      opacity: 1;
+    .polaroid-mini-action:hover {
+      transform: scale(1.12);
+      background: #ffffff;
     }
 
-    @media (hover: none) {
-      .polaroid-del-btn {
-        opacity: 0.92;
-      }
+    .polaroid-mini-action.del {
+      border-color: rgba(214, 69, 96, 0.45);
+      color: var(--danger-text);
     }
 
-    .polaroid-del-btn:hover {
+    .polaroid-mini-action.del:hover {
       background: var(--danger-soft);
-      transform: scale(1.1);
+    }
+
+    /* โหมดจัดการหลายรูป (Bulk Select Mode) */
+    .bulk-manage-bar {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #fff0f5, #eef9fb);
+      border: 2px solid var(--pink-400);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      position: sticky;
+      top: 66px;
+      z-index: 40;
+      box-shadow: 0 8px 20px rgba(251, 111, 146, 0.18);
+    }
+
+    .bulk-manage-bar.is-visible {
+      display: flex;
+    }
+
+    .polaroid-select-check {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      background: rgba(255, 255, 255, 0.18);
+      border: none;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .select-pill-indicator {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid var(--pink-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .polaroid-card.is-selected {
+      box-shadow: 0 0 0 4px var(--pink-500), var(--shadow-hover);
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .polaroid-card.is-selected .select-pill-indicator {
+      background: var(--pink-500);
+      color: #fff;
+      border-color: #fff;
+    }
+
+    /* Modal สำหรับเพิ่มรูปใหม่ & แก้ไขรูปโพลารอยด์ */
+    .editor-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 240;
+      background: var(--backdrop-overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .editor-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .editor-dialog-card {
+      position: relative;
+      background: var(--bg-paper);
+      border: 2.5px dashed var(--pink-400);
+      border-radius: 22px;
+      padding: 1.4rem 1.35rem;
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 22px 54px rgba(30, 15, 25, 0.4);
+      animation: modalZoomIn 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .editor-preview-wrap {
+      width: 210px;
+      margin: 0.5rem auto 1rem;
+      background: #fff;
+      padding: 0.6rem 0.6rem 0.75rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow-polaroid);
+      border: 1px solid var(--pink-200);
+      position: relative;
+    }
+
+    .editor-preview-frame {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--pink-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .editor-preview-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: transform 0.2s ease;
+    }
+
+    .editor-field-group {
+      margin-bottom: 0.85rem;
+      text-align: left;
+    }
+
+    .editor-field-label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--ink-main);
+      margin-bottom: 0.32rem;
+    }
+
+    .editor-text-input {
+      width: 100%;
+      border: 1.5px solid var(--pink-300);
+      border-radius: 12px;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.92rem;
+      background: var(--bg-paper-warm);
+    }
+
+    .editor-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.38rem;
+    }
+
+    .ctrl-chip.primary-pink-btn {
+      background: linear-gradient(135deg, var(--pink-400), var(--pink-500));
+      border-color: var(--pink-600);
+      color: #fff;
+    }
+
+    .ctrl-chip.danger-chip-btn {
+      background: var(--danger-soft);
+      border-color: rgba(214, 69, 96, 0.5);
+      color: var(--danger-text);
     }
 
     .polaroid-caption {
@@ -3312,6 +3483,15 @@
             <button type="button" class="ctrl-chip" data-folder-filter="fan" aria-pressed="false">
               🌸 fan (<span id="filterCountFan">0</span>)
             </button>
+            <button type="button" id="openAddPhotoModalBtn" class="ctrl-chip primary-pink-btn" aria-label="เพิ่มรูปใหม่เข้าสมุดภาพ">
+              ➕ เพิ่มรูปใหม่
+            </button>
+            <button type="button" id="toggleBulkManageBtn" class="ctrl-chip" aria-pressed="false" aria-label="เปิดหรือปิดโหมดเลือกลบและแก้ไขหลายรูป">
+              🛠️ จัดการหลายรูป
+            </button>
+            <button type="button" id="galleryRestoreDeletedBtn" class="ctrl-chip" style="display:none;" aria-label="กู้คืนรูปตั้งต้นที่ลบไป">
+              ♻️ กู้คืนรูป (<span id="removedCountLabel">0</span>)
+            </button>
           </div>
 
           <div class="filter-group" role="group" aria-label="ตัวกรองรูปโปรดและลูกเล่น">
@@ -3333,6 +3513,23 @@
             <button type="button" id="galleryMusicBtn" class="ctrl-chip" aria-pressed="false" aria-label="เปิดหรือปิดเพลงประกอบ">
               🎵 เพลง
             </button>
+          </div>
+        </div>
+
+        <!-- แถบจัดการหลายรูปพร้อมกัน (Bulk Manage Bar) -->
+        <div id="bulkManageBar" class="bulk-manage-bar" role="region" aria-label="แถบเครื่องมือจัดการรูปที่เลือก">
+          <div style="font-weight:700; font-size:0.92rem;">
+            ☑️ เลือกไว้ <span id="bulkSelectedCount" style="color:var(--pink-600); font-family:var(--font-heading); font-size:1.15rem;">0</span> รูป
+            <span style="font-weight:400; font-size:0.8rem; color:var(--ink-soft);">(แตะที่การ์ดรูปเพื่อเลือก/ยกเลิก)</span>
+          </div>
+          <div class="filter-group">
+            <button type="button" id="bulkSelectAllBtn" class="mini-pill-btn">☑️ เลือกทั้งหมดในหน้านี้</button>
+            <button type="button" id="bulkClearSelBtn" class="mini-pill-btn">⬜ ยกเลิกที่เลือก</button>
+            <button type="button" id="bulkMoveDuoBtn" class="mini-pill-btn">💕 ย้ายไป Duo</button>
+            <button type="button" id="bulkMoveFanBtn" class="mini-pill-btn">🌸 ย้ายไป fan</button>
+            <button type="button" id="bulkFavSelectedBtn" class="mini-pill-btn">💖 ตั้งเป็นรูปโปรด</button>
+            <button type="button" id="bulkDeleteSelectedBtn" class="danger-link-btn">🗑️ ลบที่เลือก</button>
+            <button type="button" id="bulkDoneBtn" class="mini-pill-btn" style="background:var(--pink-200);">✓ เสร็จสิ้น</button>
           </div>
         </div>
 
@@ -3505,6 +3702,12 @@
           <button type="button" id="lightboxFavBtn" class="lb-icon-btn" aria-pressed="false" aria-label="กดหัวใจเป็นรูปโปรด">
             🤍 โปรด
           </button>
+          <button type="button" id="lightboxEditBtn" class="lb-icon-btn" aria-label="แก้ไขรูปภาพและการ์ดใบนี้">
+            ✏️ แก้ไข
+          </button>
+          <button type="button" id="lightboxDeleteBtn" class="lb-icon-btn" style="color:var(--danger-text);" aria-label="ลบรูปนี้ออกจากสมุดภาพ">
+            🗑️ ลบ
+          </button>
           <button type="button" id="lightboxSlideshowBtn" class="lb-icon-btn" aria-pressed="false" aria-label="เล่นหรือหยุดสไลด์โชว์">
             ▶️ เล่นสไลด์
           </button>
@@ -3532,6 +3735,133 @@
           aria-label="แก้ไขแคปชั่นใต้ภาพในหน้าต่างขยาย"
           data-placeholder="คลิกเพื่อเขียนแคปชั่นความทรงจำ..."
         ></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL เพิ่มรูปใหม่ในส่วนรูปทั้งหมด (#addPhotoModal)
+       ======================================================================== -->
+  <div id="addPhotoModal" class="editor-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="addPhotoModalTitle" aria-hidden="true">
+    <div class="editor-dialog-card">
+      <div class="washi-tape washi-duo" aria-hidden="true"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+        <h3 id="addPhotoModalTitle" style="margin:0; font-size:1.35rem;">➕ เพิ่มรูปใหม่เข้าสมุดภาพ</h3>
+        <button type="button" id="closeAddModalBtn" class="lb-icon-btn">✕ ปิด</button>
+      </div>
+
+      <div class="editor-field-group">
+        <span class="editor-field-label">1. เลือกโฟลเดอร์ปลายทาง:</span>
+        <div class="editor-chip-row" role="group" aria-label="เลือกโฟลเดอร์ที่จะเพิ่มรูป">
+          <button type="button" class="ctrl-chip is-active" data-add-target-folder="Duo" aria-pressed="true">💕 โฟลเดอร์ Duo (รูปคู่)</button>
+          <button type="button" class="ctrl-chip" data-add-target-folder="fan" aria-pressed="false">🌸 โฟลเดอร์ fan (คนพิเศษ)</button>
+        </div>
+      </div>
+
+      <div class="editor-field-group">
+        <label for="addModalCaptionInput" class="editor-field-label">2. แคปชั่นเริ่มต้น (เว้นว่างได้):</label>
+        <input type="text" id="addModalCaptionInput" class="editor-text-input" placeholder="เช่น ไปกินของอร่อยด้วยกันวันนี้ 💕" />
+      </div>
+
+      <div class="editor-field-group">
+        <span class="editor-field-label">3. เลือกรูปภาพจากเครื่อง (เลือกได้หลายรูปพร้อมกัน):</span>
+        <div
+          id="addModalDropZone"
+          style="border:2px dashed var(--pink-400); border-radius:16px; padding:1.4rem 1rem; text-align:center; background:var(--pink-100); cursor:pointer;"
+        >
+          <div style="font-size:2rem; margin-bottom:0.25rem;">📸</div>
+          <div style="font-weight:700; margin-bottom:0.25rem;">แตะที่นี่เพื่อเลือกรูป หรือลากรูปมาวาง</div>
+          <div id="addModalSelectedInfo" style="font-size:0.82rem; color:var(--ink-soft);">รองรับไฟล์ JPG, PNG, WebP (ย่อขนาดอัตโนมัติ)</div>
+          <input type="file" id="addModalFileInput" class="sr-only" accept="image/*" multiple />
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+        <button type="button" id="cancelAddModalBtn" class="ctrl-chip">ยกเลิก</button>
+        <button type="button" id="confirmAddModalBtn" class="ctrl-chip primary-pink-btn">💾 เพิ่มเข้าสมุดภาพเลย</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL แก้ไขรูปและการ์ดโพลารอยด์ (#photoEditorModal)
+       ======================================================================== -->
+  <div id="photoEditorModal" class="editor-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="photoEditorTitle" aria-hidden="true">
+    <div class="editor-dialog-card">
+      <div class="washi-tape" aria-hidden="true"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+        <h3 id="photoEditorTitle" style="margin:0; font-size:1.35rem;">✏️ แก้ไขการ์ดโพลารอยด์</h3>
+        <button type="button" id="closePhotoEditorBtn" class="lb-icon-btn">✕ ปิด</button>
+      </div>
+
+      <!-- ตัวอย่างการ์ดโพลารอยด์แบบสด -->
+      <div class="editor-preview-wrap">
+        <div id="editorPreviewTape" class="washi-tape" style="width:74px; height:19px; top:-9px;" aria-hidden="true"></div>
+        <div class="editor-preview-frame">
+          <img id="editorPreviewImg" src="" alt="ตัวอย่างรูปที่กำลังแก้ไข" />
+        </div>
+        <div id="editorPreviewCap" style="font-family:var(--font-heading); font-size:0.86rem; text-align:center; margin-top:0.45rem; min-height:1.2rem;"></div>
+      </div>
+
+      <div style="text-align:center; margin-bottom:0.9rem;">
+        <button type="button" id="editorReplaceImgBtn" class="mini-pill-btn" style="border-color:var(--pink-500); color:var(--pink-600);">
+          🖼️ เปลี่ยนไฟล์รูปภาพใหม่แทนใบนี้
+        </button>
+        <input type="file" id="editorReplaceFileInput" class="sr-only" accept="image/*" />
+      </div>
+
+      <div class="editor-field-group">
+        <label for="editorCaptionInput" class="editor-field-label">✍️ แคปชั่นใต้ภาพ:</label>
+        <input type="text" id="editorCaptionInput" class="editor-text-input" placeholder="เขียนความทรงจำน่ารักๆ..." />
+      </div>
+
+      <div class="editor-field-group">
+        <span class="editor-field-label">📁 หมวดหมู่โฟลเดอร์:</span>
+        <div class="editor-chip-row">
+          <button type="button" class="mini-pill-btn" data-edit-folder="Duo">💕 โฟลเดอร์ Duo</button>
+          <button type="button" class="mini-pill-btn" data-edit-folder="fan">🌸 โฟลเดอร์ fan</button>
+        </div>
+      </div>
+
+      <div class="editor-field-group">
+        <span class="editor-field-label">🔄 หมุนรูป &amp; การจัดกรอบภาพ:</span>
+        <div class="editor-chip-row" style="margin-bottom:0.4rem;">
+          <button type="button" id="editorRotateLeftBtn" class="mini-pill-btn">↺ หมุนซ้าย 90°</button>
+          <button type="button" id="editorRotateRightBtn" class="mini-pill-btn">↻ หมุนขวา 90°</button>
+          <button type="button" class="mini-pill-btn" data-edit-fit="cover">🖼️ เต็มกรอบ</button>
+          <button type="button" class="mini-pill-btn" data-edit-fit="contain">📐 เห็นครบทั้งใบ</button>
+        </div>
+        <div class="editor-chip-row">
+          <span style="font-size:0.8rem; color:var(--ink-soft); align-self:center;">จุดโฟกัสแนวตั้ง:</span>
+          <button type="button" class="mini-pill-btn" data-edit-posy="15%">⬆️ บน</button>
+          <button type="button" class="mini-pill-btn" data-edit-posy="22%">🎯 กึ่งบน</button>
+          <button type="button" class="mini-pill-btn" data-edit-posy="50%">⏺️ กลาง</button>
+          <button type="button" class="mini-pill-btn" data-edit-posy="80%">⬇️ ล่าง</button>
+        </div>
+      </div>
+
+      <div class="editor-field-group">
+        <span class="editor-field-label">🎀 สีเทปวาชิบนหัวการ์ด:</span>
+        <div class="editor-chip-row">
+          <button type="button" class="mini-pill-btn" data-edit-washi="auto">🎲 อัตโนมัติ</button>
+          <button type="button" class="mini-pill-btn" data-edit-washi="pink">🌸 ชมพู</button>
+          <button type="button" class="mini-pill-btn" data-edit-washi="washi-blue">💙 ฟ้า</button>
+          <button type="button" class="mini-pill-btn" data-edit-washi="washi-duo">💞 ทูโทน</button>
+          <button type="button" class="mini-pill-btn" data-edit-washi="washi-lemon">🍋 เหลือง</button>
+          <button type="button" class="mini-pill-btn" data-edit-washi="washi-mint">🌿 มิ้นต์</button>
+          <button type="button" class="mini-pill-btn" data-edit-washi="washi-lavender">🪻 ม่วง</button>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem; margin-top:1.1rem; padding-top:0.8rem; border-top:1.5px dashed var(--pink-200);">
+        <div style="display:flex; gap:0.4rem;">
+          <button type="button" id="editorDeletePhotoBtn" class="ctrl-chip danger-chip-btn">🗑️ ลบรูปนี้</button>
+          <button type="button" id="editorResetOrigBtn" class="ctrl-chip">↺ คืนค่าเดิม</button>
+        </div>
+        <div style="display:flex; gap:0.45rem;">
+          <button type="button" id="editorCancelBtn" class="ctrl-chip">ยกเลิก</button>
+          <button type="button" id="editorSaveBtn" class="ctrl-chip primary-pink-btn">💾 บันทึกการแก้ไข</button>
+        </div>
       </div>
     </div>
   </div>
@@ -3666,7 +3996,7 @@
          ------------------------------------------------------------------------ */
       const STORAGE_KEY = 'sweet_love_scrapbook_v1';
       const DB_NAME = 'SweetLoveScrapbookDB';
-      const DB_VERSION = 1;
+      const DB_VERSION = 2;
 
       const COUPLE_BIRTHDAYS = {
         alicha: { year: 2006, month: 6, day: 6, name: 'อลิชา' },
@@ -3768,6 +4098,7 @@
         anniversaryDate: '',
         favorites: [],
         captions: {},
+        photoEdits: {},
         removedLocalIds: [],
         profiles: {
           alichaRole: 'เจ้าของพื้นที่หัวใจ & ผู้ถือสิทธิ์งอนสูงสุด',
@@ -3910,6 +4241,7 @@
           state = {
             ...structuredCloneState(DEFAULT_DEFAULTS),
             ...parsed,
+            photoEdits: { ...(parsed.photoEdits || {}) },
             profiles: { ...DEFAULT_DEFAULTS.profiles, ...(parsed.profiles || {}) },
             contract: { ...DEFAULT_DEFAULTS.contract, ...(parsed.contract || {}) },
             letter: {
@@ -3955,6 +4287,7 @@
       let useMemoryFallback = false;
       const memoryPhotosMap = new Map();
       const memoryAvatarsMap = new Map();
+      const memoryOverridesMap = new Map();
       const objectUrlRegistry = new Map();
 
       function createManagedObjectUrl(key, blob) {
@@ -3998,6 +4331,9 @@
               if (!db.objectStoreNames.contains('avatars')) {
                 db.createObjectStore('avatars', { keyPath: 'person' });
               }
+              if (!db.objectStoreNames.contains('photoOverrides')) {
+                db.createObjectStore('photoOverrides', { keyPath: 'id' });
+              }
             };
             req.onsuccess = (e) => {
               idbInstance = e.target.result;
@@ -4028,6 +4364,60 @@
             req.onerror = () => resolve([]);
           } catch {
             resolve([]);
+          }
+        });
+      }
+
+      function dbGetAllPhotoOverrides() {
+        if (useMemoryFallback || !idbInstance || !idbInstance.objectStoreNames.contains('photoOverrides')) {
+          return Promise.resolve(Array.from(memoryOverridesMap.values()));
+        }
+        return new Promise((resolve) => {
+          try {
+            const tx = idbInstance.transaction('photoOverrides', 'readonly');
+            const req = tx.objectStore('photoOverrides').getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
+          } catch {
+            resolve([]);
+          }
+        });
+      }
+
+      function dbSavePhotoOverride(id, blob) {
+        if (useMemoryFallback || !idbInstance || !idbInstance.objectStoreNames.contains('photoOverrides')) {
+          memoryOverridesMap.set(id, { id, blob });
+          return Promise.resolve();
+        }
+        return new Promise((resolve) => {
+          try {
+            const tx = idbInstance.transaction('photoOverrides', 'readwrite');
+            tx.objectStore('photoOverrides').put({ id, blob });
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => {
+              memoryOverridesMap.set(id, { id, blob });
+              resolve();
+            };
+          } catch {
+            memoryOverridesMap.set(id, { id, blob });
+            resolve();
+          }
+        });
+      }
+
+      function dbDeletePhotoOverride(id) {
+        memoryOverridesMap.delete(id);
+        if (useMemoryFallback || !idbInstance || !idbInstance.objectStoreNames.contains('photoOverrides')) {
+          return Promise.resolve();
+        }
+        return new Promise((resolve) => {
+          try {
+            const tx = idbInstance.transaction('photoOverrides', 'readwrite');
+            tx.objectStore('photoOverrides').delete(id);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => resolve();
+          } catch {
+            resolve();
           }
         });
       }
@@ -4071,12 +4461,16 @@
       function dbClearAllStores() {
         memoryPhotosMap.clear();
         memoryAvatarsMap.clear();
+        memoryOverridesMap.clear();
         if (useMemoryFallback || !idbInstance) return Promise.resolve();
         return new Promise((resolve) => {
           try {
-            const tx = idbInstance.transaction(['photos', 'avatars'], 'readwrite');
-            tx.objectStore('photos').clear();
-            tx.objectStore('avatars').clear();
+            const stores = ['photos', 'avatars'];
+            if (idbInstance.objectStoreNames.contains('photoOverrides')) {
+              stores.push('photoOverrides');
+            }
+            const tx = idbInstance.transaction(stores, 'readwrite');
+            stores.forEach((s) => tx.objectStore(s).clear());
             tx.oncomplete = () => resolve();
             tx.onerror = () => resolve();
           } catch {
@@ -4749,12 +5143,32 @@
       });
 
       /* ------------------------------------------------------------------------
-         9. PHOTO COLLECTION STATE (Local ./Duo/ & ./fan/ + IndexedDB + Sample SVG)
+         9. PHOTO COLLECTION STATE (Local ./Duo/ & ./fan/ + IndexedDB + Overrides)
          ------------------------------------------------------------------------ */
       let uploadedPhotos = []; // รายการจาก IndexedDB
+      const overrideUrlsMap = new Map(); // รูปที่ถูกแก้ไขเปลี่ยนไฟล์ใหม่ (id -> objectURL)
       const missingLocalIds = new Set(); // เก็บ id ของไฟล์ local ที่โหลดไม่พบ (onerror)
       let currentFolderFilter = 'all'; // 'all' | 'Duo' | 'fan'
       let currentFavFilter = 'all'; // 'all' | 'fav'
+      let bulkManageMode = false;
+      const bulkSelectedIds = new Set();
+
+      function applyPhotoEditsToEntry(basePhoto) {
+        const edits = (state.photoEdits && state.photoEdits[basePhoto.id]) || {};
+        const customSrc = overrideUrlsMap.get(basePhoto.id);
+        return {
+          ...basePhoto,
+          origFolder: basePhoto.folder,
+          origSrc: basePhoto.src,
+          folder: edits.folder === 'Duo' || edits.folder === 'fan' ? edits.folder : basePhoto.folder,
+          src: customSrc || basePhoto.src,
+          hasCustomImage: Boolean(customSrc),
+          rotate: typeof edits.rotate === 'number' ? edits.rotate : 0,
+          fit: edits.fit === 'contain' ? 'contain' : 'cover',
+          posY: edits.posY || '22%',
+          washi: edits.washi || 'auto'
+        };
+      }
 
       function buildLocalPhotoObjects() {
         const removedSet = new Set(state.removedLocalIds || []);
@@ -4785,14 +5199,13 @@
       // รวมรูปทั้งหมด: ถ้าโฟลเดอร์ไหนมีรูปจริงอย่างน้อย 1 ใบ จะซ่อนรูปตัวอย่างของโฟลเดอร์นั้นอัตโนมัติ
       function getActiveAlbumPhotos() {
         const localList = buildLocalPhotoObjects();
-        const realDuo = [
-          ...uploadedPhotos.filter((p) => p.folder === 'Duo'),
-          ...localList.filter((p) => p.folder === 'Duo')
+        const allReal = [
+          ...uploadedPhotos.map(applyPhotoEditsToEntry),
+          ...localList.map(applyPhotoEditsToEntry)
         ];
-        const realFan = [
-          ...uploadedPhotos.filter((p) => p.folder === 'fan'),
-          ...localList.filter((p) => p.folder === 'fan')
-        ];
+
+        const realDuo = allReal.filter((p) => p.folder === 'Duo');
+        const realFan = allReal.filter((p) => p.folder === 'fan');
 
         const combined = [
           ...(realDuo.length > 0 ? realDuo : SAMPLE_PHOTOS.filter((s) => s.folder === 'Duo')),
@@ -4834,6 +5247,13 @@
         return photo.defaultCaption || '';
       }
 
+      function resolveWashiClassForPhoto(photo) {
+        if (photo.washi && photo.washi !== 'auto') {
+          return photo.washi === 'pink' ? '' : photo.washi;
+        }
+        return getWashiClass(photo);
+      }
+
       /* ------------------------------------------------------------------------
          10. RENDER GALLERY, BADGES & AVATARS
          ------------------------------------------------------------------------ */
@@ -4869,7 +5289,7 @@
         if (usingSampleDuo || usingSampleFan) {
           sampleBanner.classList.add('is-visible');
           if (usingSampleDuo && usingSampleFan) {
-            sampleText.textContent = 'กำลังแสดงรูปตัวอย่างพาสเทล (โฟลเดอร์ละ 3 ใบ) — เพิ่มรูปจริงของคุณในการ์ดสีเหลืองด้านบนแล้วรูปตัวอย่างจะซ่อนอัตโนมัติ ✨';
+            sampleText.textContent = 'กำลังแสดงรูปตัวอย่างพาสเทล (โฟลเดอร์ละ 3 ใบ) — กด “➕ เพิ่มรูปใหม่” เพื่อใส่รูปจริงแล้วรูปตัวอย่างจะซ่อนอัตโนมัติ ✨';
           } else if (usingSampleDuo) {
             sampleText.textContent = 'โฟลเดอร์ Duo ยังไม่มีรูปจริง จึงแสดงรูปตัวอย่าง 3 ใบไว้ให้ชมก่อนนะ 💕';
           } else {
@@ -4879,11 +5299,17 @@
           sampleBanner.classList.remove('is-visible');
         }
 
-        // ปุ่มคืนค่ารูปในเครื่องที่เคยซ่อนไว้
+        // ปุ่มกู้คืนรูปที่ลบไป ทั้งในแกลเลอรีและด้านล่างเว็บ
+        const removedLen = (state.removedLocalIds || []).length;
         const restoreBtn = document.getElementById('restoreHiddenLocalBtn');
-        if (restoreBtn) {
-          restoreBtn.style.display = (state.removedLocalIds && state.removedLocalIds.length > 0) ? 'inline-flex' : 'none';
-        }
+        const galRestoreBtn = document.getElementById('galleryRestoreDeletedBtn');
+        const removedCountLbl = document.getElementById('removedCountLabel');
+        if (restoreBtn) restoreBtn.style.display = removedLen > 0 ? 'inline-flex' : 'none';
+        if (galRestoreBtn) galRestoreBtn.style.display = removedLen > 0 ? 'inline-flex' : 'none';
+        if (removedCountLbl) removedCountLbl.textContent = String(removedLen);
+
+        const bulkCountEl = document.getElementById('bulkSelectedCount');
+        if (bulkCountEl) bulkCountEl.textContent = String(bulkSelectedIds.size);
       }
 
       function renderGalleryAndStats() {
@@ -4914,7 +5340,7 @@
           sub.style.color = 'var(--ink-soft)';
           sub.textContent = currentFavFilter === 'fav'
             ? 'ลองกดปุ่มหัวใจ 🤍 มุมบนขวาของการ์ดโพลารอยด์ใบที่ชอบ เพื่อเก็บไว้ในรายการโปรดดูสิ!'
-            : 'กดเพิ่มรูปในการ์ดโฟลเดอร์สีเหลืองด้านบน หรือสลับดูหมวดทั้งหมดได้เลยนะ';
+            : 'กดปุ่ม “➕ เพิ่มรูปใหม่” ด้านบน หรือสลับกลับไปดูหมวดทั้งหมดได้เลยนะ';
 
           const showAllBtn = document.createElement('button');
           showAllBtn.type = 'button';
@@ -4933,15 +5359,16 @@
 
         filtered.forEach((photo, idx) => {
           const isFav = favSet.has(photo.id);
+          const isSelected = bulkSelectedIds.has(photo.id);
           const card = document.createElement('article');
-          card.className = 'polaroid-card';
+          card.className = 'polaroid-card' + (isSelected ? ' is-selected' : '');
           card.dataset.photoId = photo.id;
           card.style.setProperty('--card-tilt', getTiltDeg(photo.id));
           card.style.setProperty('--enter-delay', `${Math.min(idx, 14) * 38}ms`);
 
           // เทปวาชิหัวการ์ด
           const tape = document.createElement('div');
-          tape.className = ('washi-tape ' + getWashiClass(photo)).trim();
+          tape.className = ('washi-tape ' + resolveWashiClassForPhoto(photo)).trim();
           tape.setAttribute('aria-hidden', 'true');
 
           const photoWrap = document.createElement('div');
@@ -4960,6 +5387,11 @@
           img.alt = captionText || `รูปหมวด ${photo.folder}`;
           img.loading = 'lazy';
           img.decoding = 'async';
+          img.style.objectFit = photo.fit || 'cover';
+          img.style.objectPosition = `center ${photo.posY || '22%'}`;
+          if (photo.rotate) {
+            img.style.transform = `rotate(${photo.rotate}deg)`;
+          }
 
           // Smart Fallback onerror บนแท็ก <img> ทุกใบ
           img.onerror = () => {
@@ -4970,7 +5402,7 @@
               photo.folder === 'Duo' ? '💑' : '🌸',
               `ตัวอย่าง ${photo.folder}`
             );
-            if (photo.isLocal && !missingLocalIds.has(photo.id)) {
+            if (photo.isLocal && !photo.hasCustomImage && !missingLocalIds.has(photo.id)) {
               missingLocalIds.add(photo.id);
               debouncedMissingRefresh();
             }
@@ -4979,21 +5411,46 @@
           openBtn.appendChild(img);
           photoWrap.appendChild(openBtn);
 
-          // ป้ายรูปตัวอย่าง หรือ ปุ่มลบรูปจริง
+          // ป้ายรูปตัวอย่าง หรือ ปุ่มแก้ไข ✏️ / ลบรูป 🗑️ หรือ Checkbox โหมดจัดการหลายรูป
           if (photo.isSample) {
             const sampleTag = document.createElement('span');
             sampleTag.className = 'polaroid-sample-tag';
             sampleTag.textContent = '✨ รูปตัวอย่าง';
             photoWrap.appendChild(sampleTag);
+          } else if (bulkManageMode) {
+            const selOverlay = document.createElement('button');
+            selOverlay.type = 'button';
+            selOverlay.className = 'polaroid-select-check';
+            selOverlay.dataset.action = 'toggle-select';
+            selOverlay.setAttribute('aria-pressed', String(isSelected));
+            selOverlay.setAttribute('aria-label', isSelected ? 'ยกเลิกเลือกรูปนี้' : 'เลือกรูปนี้');
+            const badge = document.createElement('span');
+            badge.className = 'select-pill-indicator';
+            badge.textContent = isSelected ? '✓' : '';
+            selOverlay.appendChild(badge);
+            photoWrap.appendChild(selOverlay);
           } else {
+            const tools = document.createElement('div');
+            tools.className = 'polaroid-card-tools';
+
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'polaroid-mini-action';
+            editBtn.dataset.action = 'edit-photo';
+            editBtn.setAttribute('aria-label', 'แก้ไขรูปและการ์ดใบนี้');
+            editBtn.title = 'แก้ไขรูป / ย้ายโฟลเดอร์ / หมุนภาพ';
+            editBtn.textContent = '✏️';
+
             const delBtn = document.createElement('button');
             delBtn.type = 'button';
-            delBtn.className = 'polaroid-del-btn';
+            delBtn.className = 'polaroid-mini-action del';
             delBtn.dataset.action = 'delete-photo';
             delBtn.setAttribute('aria-label', 'ลบรูปนี้ออกจากสมุดภาพ');
-            delBtn.title = 'ลบออกจากสมุดภาพ';
+            delBtn.title = 'ลบรูปออกจากสมุดภาพ';
             delBtn.textContent = '🗑️';
-            photoWrap.appendChild(delBtn);
+
+            tools.append(editBtn, delBtn);
+            photoWrap.appendChild(tools);
           }
 
           // ปุ่มหัวใจ Favorite มุมขวาบน
@@ -5044,9 +5501,9 @@
       }
 
       /* ------------------------------------------------------------------------
-         11. UPLOAD / DRAG-DROP / DELETE PHOTO HANDLERS
+         11. UPLOAD / DRAG-DROP / EDIT / DELETE / BULK PHOTO HANDLERS
          ------------------------------------------------------------------------ */
-      async function handleAddFilesToFolder(folder, rawFileList) {
+      async function handleAddFilesToFolder(folder, rawFileList, customCaption = '') {
         const files = Array.from(rawFileList || []).filter((f) => f && f.size > 0);
         if (files.length === 0) return;
 
@@ -5056,6 +5513,7 @@
 
         let addedCount = 0;
         let failedCount = 0;
+        const trimmedCustomCap = (customCaption || '').trim();
 
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
@@ -5074,6 +5532,14 @@
             await dbSavePhotoRecord(record);
 
             const objUrl = createManagedObjectUrl(id, resizedBlob);
+            const initialCap = trimmedCustomCap
+              ? (files.length > 1 ? `${trimmedCustomCap} #${i + 1}` : trimmedCustomCap)
+              : (cleanBaseName || (folder === 'Duo' ? 'รูปคู่ของเรา 💕' : 'คนพิเศษของฉัน 🌸'));
+
+            if (trimmedCustomCap) {
+              state.captions[id] = initialCap;
+            }
+
             uploadedPhotos.unshift({
               id,
               folder,
@@ -5081,12 +5547,16 @@
               src: objUrl,
               isLocal: false,
               isSample: false,
-              defaultCaption: cleanBaseName || (folder === 'Duo' ? 'รูปคู่ของเรา 💕' : 'คนพิเศษของฉัน 🌸')
+              defaultCaption: initialCap
             });
             addedCount++;
           } catch {
             failedCount++;
           }
+        }
+
+        if (trimmedCustomCap && addedCount > 0) {
+          saveStateToLocalStorage(false);
         }
 
         statusBar.classList.remove('is-visible');
@@ -5103,14 +5573,8 @@
         }
       }
 
-      async function handleDeletePhoto(photoId) {
-        const { all } = getActiveAlbumPhotos();
-        const target = all.find((p) => p.id === photoId);
-        if (!target || target.isSample) return;
-
-        const ok = window.confirm('ต้องการลบรูปนี้ออกจากสมุดภาพใช่ไหมคะ?\n(ลบเฉพาะในสมุดภาพบนเว็บ ไฟล์ต้นฉบับในเครื่องของคุณจะไม่ถูกลบ)');
-        if (!ok) return;
-
+      async function deleteSinglePhotoRecord(target) {
+        const photoId = target.id;
         if (target.isLocal) {
           if (!state.removedLocalIds.includes(photoId)) {
             state.removedLocalIds.push(photoId);
@@ -5120,13 +5584,127 @@
           revokeManagedObjectUrl(photoId);
           uploadedPhotos = uploadedPhotos.filter((p) => p.id !== photoId);
         }
-
+        if (overrideUrlsMap.has(photoId)) {
+          await dbDeletePhotoOverride(photoId);
+          revokeManagedObjectUrl('override-' + photoId);
+          overrideUrlsMap.delete(photoId);
+        }
         state.favorites = (state.favorites || []).filter((id) => id !== photoId);
         delete state.captions[photoId];
+        if (state.photoEdits) delete state.photoEdits[photoId];
+        bulkSelectedIds.delete(photoId);
+      }
+
+      async function handleDeletePhoto(photoId) {
+        const { all } = getActiveAlbumPhotos();
+        const target = all.find((p) => p.id === photoId);
+        if (!target || target.isSample) return false;
+
+        const ok = window.confirm('ต้องการลบรูปนี้ออกจากสมุดภาพใช่ไหมคะ?\n(ลบเฉพาะในสมุดภาพบนเว็บ ไฟล์ต้นฉบับในเครื่องของคุณจะไม่ถูกลบ)');
+        if (!ok) return false;
+
+        await deleteSinglePhotoRecord(target);
         saveStateToLocalStorage(true);
 
         renderGalleryAndStats();
         refreshCoupleAvatars();
+        return true;
+      }
+
+      function toggleBulkSelectPhoto(photoId) {
+        if (bulkSelectedIds.has(photoId)) {
+          bulkSelectedIds.delete(photoId);
+        } else {
+          bulkSelectedIds.add(photoId);
+        }
+        renderGalleryAndStats();
+      }
+
+      function setBulkManageMode(active) {
+        bulkManageMode = active;
+        if (!active) bulkSelectedIds.clear();
+        const toggleBtn = document.getElementById('toggleBulkManageBtn');
+        const bar = document.getElementById('bulkManageBar');
+        if (toggleBtn) {
+          toggleBtn.setAttribute('aria-pressed', String(active));
+          toggleBtn.classList.toggle('is-active', active);
+          toggleBtn.textContent = active ? '✓ กำลังเลือกรูป' : '🛠️ จัดการหลายรูป';
+        }
+        if (bar) bar.classList.toggle('is-visible', active);
+        renderGalleryAndStats();
+      }
+
+      // เปิดหน้าต่างแก้ไขรูปโพลารอยด์ (#photoEditorModal)
+      let currentEditingPhotoId = null;
+      let pendingReplacementBlob = null;
+      let editorDraft = null;
+
+      function openPhotoEditorModal(photoId) {
+        const { all } = getActiveAlbumPhotos();
+        const photo = all.find((p) => p.id === photoId);
+        if (!photo || photo.isSample) return;
+
+        currentEditingPhotoId = photo.id;
+        pendingReplacementBlob = null;
+        editorDraft = {
+          caption: getCaptionForPhoto(photo),
+          folder: photo.folder,
+          rotate: photo.rotate || 0,
+          fit: photo.fit || 'cover',
+          posY: photo.posY || '22%',
+          washi: photo.washi || 'auto',
+          previewSrc: photo.src
+        };
+
+        document.getElementById('editorCaptionInput').value = editorDraft.caption;
+        syncPhotoEditorPreviewUI(photo);
+
+        const modal = document.getElementById('photoEditorModal');
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closePhotoEditorModal() {
+        const modal = document.getElementById('photoEditorModal');
+        if (!modal) return;
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        revokeManagedObjectUrl('editor-temp-preview');
+        currentEditingPhotoId = null;
+        pendingReplacementBlob = null;
+        if (!lightboxOpen) document.body.style.overflow = '';
+      }
+
+      function syncPhotoEditorPreviewUI(basePhoto) {
+        if (!editorDraft) return;
+        const img = document.getElementById('editorPreviewImg');
+        const cap = document.getElementById('editorPreviewCap');
+        const tape = document.getElementById('editorPreviewTape');
+
+        img.src = editorDraft.previewSrc;
+        img.style.objectFit = editorDraft.fit;
+        img.style.objectPosition = `center ${editorDraft.posY}`;
+        img.style.transform = `rotate(${editorDraft.rotate}deg)`;
+        cap.textContent = editorDraft.caption || 'แตะเพื่อเขียนความทรงจำ...';
+
+        const tapeClass = editorDraft.washi === 'auto'
+          ? (basePhoto ? getWashiClass(basePhoto) : '')
+          : (editorDraft.washi === 'pink' ? '' : editorDraft.washi);
+        tape.className = ('washi-tape ' + tapeClass).trim();
+
+        document.querySelectorAll('[data-edit-folder]').forEach((b) => {
+          b.setAttribute('aria-pressed', String(b.dataset.editFolder === editorDraft.folder));
+        });
+        document.querySelectorAll('[data-edit-fit]').forEach((b) => {
+          b.setAttribute('aria-pressed', String(b.dataset.editFit === editorDraft.fit));
+        });
+        document.querySelectorAll('[data-edit-posy]').forEach((b) => {
+          b.setAttribute('aria-pressed', String(b.dataset.editPosy === editorDraft.posY));
+        });
+        document.querySelectorAll('[data-edit-washi]').forEach((b) => {
+          b.setAttribute('aria-pressed', String(b.dataset.editWashi === editorDraft.washi));
+        });
       }
 
       function toggleFavoritePhoto(photoId, clickEvent, sourceBtn) {
@@ -5143,7 +5721,6 @@
         state.favorites = Array.from(favSet);
         saveStateToLocalStorage(true);
 
-        // อัปเดตการ์ดเฉพาะจุดถ้าไม่ได้กรองเฉพาะรูปโปรด เพื่อให้สมูทไม่กระตุก
         if (currentFavFilter === 'fav' && !willBeFav) {
           renderGalleryAndStats();
         } else {
@@ -5156,7 +5733,6 @@
           }
         }
 
-        // Sync กับ Lightbox ถ้าเปิดรูปเดียวกันอยู่
         syncLightboxFavoriteButton();
       }
 
@@ -5175,8 +5751,13 @@
           const photoId = card.dataset.photoId;
           const action = actionEl.dataset.action;
 
-          if (action === 'open-lightbox') {
-            openLightboxByPhotoId(photoId, actionEl);
+          if (action === 'toggle-select') {
+            toggleBulkSelectPhoto(photoId);
+          } else if (action === 'open-lightbox') {
+            if (bulkManageMode) toggleBulkSelectPhoto(photoId);
+            else openLightboxByPhotoId(photoId, actionEl);
+          } else if (action === 'edit-photo') {
+            openPhotoEditorModal(photoId);
           } else if (action === 'toggle-fav') {
             toggleFavoritePhoto(photoId, e, actionEl);
           } else if (action === 'delete-photo') {
@@ -5184,7 +5765,6 @@
           }
         });
 
-        // แก้ไขแคปชั่นใต้โพลารอยด์แบบ Event Delegation (keydown, paste, input)
         grid.addEventListener('keydown', (e) => {
           const cap = e.target.closest('.polaroid-caption');
           if (!cap) return;
@@ -5214,7 +5794,6 @@
           if (!photoId) return;
           const val = readEditablePlainText(cap, false);
           state.captions[photoId] = val;
-          // อัปเดต alt ของรูปในการ์ดใบเดียวกัน
           const img = cap.closest('.polaroid-card')?.querySelector('img');
           if (img) img.alt = val || 'รูปในสมุดภาพความรัก';
           debouncedSave();
@@ -5222,7 +5801,7 @@
       }
 
       /* ------------------------------------------------------------------------
-         13. LIGHTBOX MODAL (← → วนกลม, Esc, Swipe มือถือ, Preload, Focus Trap, Canvas Export)
+         13. LIGHTBOX MODAL (← → วนกลม, Esc, Swipe มือถือ, แก้ไข/ลบใน Lightbox)
          ------------------------------------------------------------------------ */
       let lightboxOpen = false;
       let lightboxIndex = 0;
@@ -5305,14 +5884,20 @@
         const badge = document.getElementById('lightboxFolderBadge');
         const counter = document.getElementById('lightboxCounterText');
         const captionEl = document.getElementById('lightboxCaptionEdit');
+        const editBtn = document.getElementById('lightboxEditBtn');
+        const delBtn = document.getElementById('lightboxDeleteBtn');
 
         img.onerror = () => {
           img.onerror = null;
           img.src = createSampleSvgDataUrl('#ffd6e0', '#b5e2fa', '💕', `ตัวอย่าง ${photo.folder}`);
         };
         img.src = photo.src;
+        img.style.transform = photo.rotate ? `rotate(${photo.rotate}deg)` : '';
         const cap = getCaptionForPhoto(photo);
         img.alt = cap || `รูปที่ ${lightboxIndex + 1}`;
+
+        if (editBtn) editBtn.style.display = photo.isSample ? 'none' : 'inline-flex';
+        if (delBtn) delBtn.style.display = photo.isSample ? 'none' : 'inline-flex';
 
         badge.className = `polaroid-folder-tag ${photo.folder === 'Duo' ? 'tag-duo' : 'tag-fan'}`;
         badge.style.position = 'static';
@@ -5380,21 +5965,30 @@
           c.fillRect(-130, -18, 260, 42);
           c.restore();
 
-          // วาดภาพแบบสี่เหลี่ยมจัตุรัสตรงกลาง
+          // วาดภาพแบบสี่เหลี่ยมจัตุรัสตรงกลาง (รองรับการหมุนรูปและการจัดกรอบที่แก้ไขไว้)
           const boxX = 65;
           const boxY = 75;
           const boxSize = 770;
           c.fillStyle = '#fff0f4';
           c.fillRect(boxX, boxY, boxSize, boxSize);
 
+          c.save();
+          c.beginPath();
+          c.rect(boxX, boxY, boxSize, boxSize);
+          c.clip();
+          c.translate(boxX + boxSize / 2, boxY + boxSize / 2);
+          if (photo.rotate) {
+            c.rotate((photo.rotate * Math.PI) / 180);
+          }
+
           const iw = liveImg.naturalWidth || 600;
           const ih = liveImg.naturalHeight || 600;
-          const scale = Math.max(boxSize / iw, boxSize / ih);
-          const sw = boxSize / scale;
-          const sh = boxSize / scale;
-          const sx = (iw - sw) / 2;
-          const sy = (ih - sh) * 0.25;
-          c.drawImage(liveImg, sx, sy, sw, sh, boxX, boxY, boxSize, boxSize);
+          const fitFn = photo.fit === 'contain' ? Math.min : Math.max;
+          const scale = fitFn(boxSize / iw, boxSize / ih);
+          const dw = iw * scale;
+          const dh = ih * scale;
+          c.drawImage(liveImg, -dw / 2, -dh / 2, dw, dh);
+          c.restore();
 
           // แคปชั่นและชื่อคู่รัก
           const cap = getCaptionForPhoto(photo) || 'สมุดภาพความรักของเรา 💕';
@@ -5430,6 +6024,29 @@
         document.getElementById('lightboxFavBtn').addEventListener('click', (e) => {
           const photo = lightboxList[lightboxIndex];
           if (photo) toggleFavoritePhoto(photo.id, e, e.currentTarget);
+        });
+
+        document.getElementById('lightboxEditBtn').addEventListener('click', () => {
+          const photo = lightboxList[lightboxIndex];
+          if (!photo || photo.isSample) return;
+          stopLightboxSlideshow();
+          openPhotoEditorModal(photo.id);
+        });
+
+        document.getElementById('lightboxDeleteBtn').addEventListener('click', async () => {
+          const photo = lightboxList[lightboxIndex];
+          if (!photo || photo.isSample) return;
+          stopLightboxSlideshow();
+          const deleted = await handleDeletePhoto(photo.id);
+          if (deleted) {
+            lightboxList = getFilteredPhotos();
+            if (lightboxList.length === 0) {
+              closeLightbox();
+            } else {
+              lightboxIndex = lightboxIndex % lightboxList.length;
+              renderLightboxSlide();
+            }
+          }
         });
 
         document.getElementById('lightboxSlideshowBtn').addEventListener('click', () => {
@@ -5475,7 +6092,7 @@
 
         // คีย์บอร์ด ← → Esc และ Focus Trap
         document.addEventListener('keydown', (e) => {
-          if (!lightboxOpen) return;
+          if (!lightboxOpen || currentEditingPhotoId !== null) return;
           const isEditingLbCaption = document.activeElement === capEdit;
 
           if (e.key === 'Escape') {
@@ -6601,6 +7218,389 @@
         setLockVisibility(pinLocked);
       }
 
+      /* ------------------------------------------------------------------------
+         19. ALL PHOTOS MANAGEMENT MODALS (ADD / EDIT / BULK MANAGE / RESTORE)
+         ------------------------------------------------------------------------ */
+      function setupAllPhotosManagementModals() {
+        /* --- A. Modal เพิ่มรูปใหม่ (#addPhotoModal) --- */
+        const addModal = document.getElementById('addPhotoModal');
+        const addCaptionInput = document.getElementById('addModalCaptionInput');
+        const addDropZone = document.getElementById('addModalDropZone');
+        const addSelectedInfo = document.getElementById('addModalSelectedInfo');
+        const addFileInput = document.getElementById('addModalFileInput');
+        let addTargetFolder = 'Duo';
+        let stagedAddFiles = [];
+
+        function syncAddTargetFolderButtons() {
+          document.querySelectorAll('[data-add-target-folder]').forEach((btn) => {
+            const active = btn.dataset.addTargetFolder === addTargetFolder;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-pressed', String(active));
+          });
+        }
+
+        function syncAddSelectedFilesText() {
+          if (stagedAddFiles.length > 0) {
+            addSelectedInfo.textContent = `✅ เลือกไว้แล้ว ${stagedAddFiles.length} รูป พร้อมเพิ่มเข้าโฟลเดอร์ ${addTargetFolder}`;
+            addSelectedInfo.style.color = 'var(--pink-600)';
+            addSelectedInfo.style.fontWeight = '700';
+          } else {
+            addSelectedInfo.textContent = 'รองรับไฟล์ JPG, PNG, WebP (ย่อขนาดอัตโนมัติ)';
+            addSelectedInfo.style.color = 'var(--ink-soft)';
+            addSelectedInfo.style.fontWeight = '400';
+          }
+        }
+
+        function openAddPhotoModal() {
+          addTargetFolder = currentFolderFilter === 'fan' ? 'fan' : 'Duo';
+          stagedAddFiles = [];
+          addCaptionInput.value = '';
+          addFileInput.value = '';
+          syncAddTargetFolderButtons();
+          syncAddSelectedFilesText();
+          addModal.classList.add('is-open');
+          addModal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddPhotoModal() {
+          addModal.classList.remove('is-open');
+          addModal.setAttribute('aria-hidden', 'true');
+          stagedAddFiles = [];
+          addFileInput.value = '';
+          if (!lightboxOpen && !currentEditingPhotoId) {
+            document.body.style.overflow = '';
+          }
+        }
+
+        document.getElementById('openAddPhotoModalBtn').addEventListener('click', openAddPhotoModal);
+        document.getElementById('closeAddModalBtn').addEventListener('click', closeAddPhotoModal);
+        document.getElementById('cancelAddModalBtn').addEventListener('click', closeAddPhotoModal);
+        addModal.addEventListener('click', (e) => {
+          if (e.target === addModal) closeAddPhotoModal();
+        });
+
+        document.querySelectorAll('[data-add-target-folder]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            addTargetFolder = btn.dataset.addTargetFolder === 'fan' ? 'fan' : 'Duo';
+            syncAddTargetFolderButtons();
+            syncAddSelectedFilesText();
+          });
+        });
+
+        addDropZone.addEventListener('click', (e) => {
+          if (e.target !== addFileInput) addFileInput.click();
+        });
+
+        addDropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          addDropZone.style.background = 'var(--pink-200)';
+        });
+
+        addDropZone.addEventListener('dragleave', (e) => {
+          if (!addDropZone.contains(e.relatedTarget)) {
+            addDropZone.style.background = 'var(--pink-100)';
+          }
+        });
+
+        addDropZone.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          addDropZone.style.background = 'var(--pink-100)';
+          const files = await extractFilesFromDataTransfer(e.dataTransfer);
+          const valid = (files || []).filter((f) => f && f.size > 0);
+          if (valid.length > 0) {
+            stagedAddFiles.push(...valid);
+            syncAddSelectedFilesText();
+          }
+        });
+
+        addFileInput.addEventListener('change', () => {
+          const picked = Array.from(addFileInput.files || []).filter((f) => f && f.size > 0);
+          addFileInput.value = '';
+          if (picked.length > 0) {
+            stagedAddFiles.push(...picked);
+            syncAddSelectedFilesText();
+          }
+        });
+
+        document.getElementById('confirmAddModalBtn').addEventListener('click', async () => {
+          if (stagedAddFiles.length === 0) {
+            showAppAlert('📸 กรุณาเลือกรูปภาพอย่างน้อย 1 รูปก่อนกดเพิ่มนะคะ');
+            addFileInput.click();
+            return;
+          }
+          const filesToSave = [...stagedAddFiles];
+          const folder = addTargetFolder;
+          const customCaption = addCaptionInput.value;
+          closeAddPhotoModal();
+          await handleAddFilesToFolder(folder, filesToSave, customCaption);
+        });
+
+        /* --- B. โหมดจัดการหลายรูปพร้อมกัน (#bulkManageBar) & กู้คืนรูป --- */
+        document.getElementById('toggleBulkManageBtn').addEventListener('click', () => {
+          setBulkManageMode(!bulkManageMode);
+        });
+
+        document.getElementById('bulkDoneBtn').addEventListener('click', () => {
+          setBulkManageMode(false);
+        });
+
+        document.getElementById('bulkSelectAllBtn').addEventListener('click', () => {
+          const selectable = getFilteredPhotos().filter((p) => !p.isSample);
+          selectable.forEach((p) => bulkSelectedIds.add(p.id));
+          renderGalleryAndStats();
+        });
+
+        document.getElementById('bulkClearSelBtn').addEventListener('click', () => {
+          bulkSelectedIds.clear();
+          renderGalleryAndStats();
+        });
+
+        function moveBulkSelectedToFolder(targetFolder) {
+          if (bulkSelectedIds.size === 0) {
+            showAppAlert('☑️ แตะเลือกรูปอย่างน้อย 1 รูปก่อนนะคะ');
+            return;
+          }
+          const count = bulkSelectedIds.size;
+          state.photoEdits = state.photoEdits || {};
+          bulkSelectedIds.forEach((id) => {
+            state.photoEdits[id] = {
+              ...(state.photoEdits[id] || {}),
+              folder: targetFolder
+            };
+          });
+          bulkSelectedIds.clear();
+          saveStateToLocalStorage(false);
+          renderGalleryAndStats();
+          refreshCoupleAvatars();
+          showSaveToast(`📁 ย้ายรูปไปโฟลเดอร์ ${targetFolder} จำนวน ${count} รูปแล้ว ✓`);
+        }
+
+        document.getElementById('bulkMoveDuoBtn').addEventListener('click', () => moveBulkSelectedToFolder('Duo'));
+        document.getElementById('bulkMoveFanBtn').addEventListener('click', () => moveBulkSelectedToFolder('fan'));
+
+        document.getElementById('bulkFavSelectedBtn').addEventListener('click', () => {
+          if (bulkSelectedIds.size === 0) {
+            showAppAlert('☑️ แตะเลือกรูปอย่างน้อย 1 รูปก่อนนะคะ');
+            return;
+          }
+          const count = bulkSelectedIds.size;
+          const favSet = new Set(state.favorites || []);
+          bulkSelectedIds.forEach((id) => favSet.add(id));
+          state.favorites = Array.from(favSet);
+          bulkSelectedIds.clear();
+          MusicBox.playSfx('fav');
+          saveStateToLocalStorage(false);
+          renderGalleryAndStats();
+          showSaveToast(`💖 ตั้งเป็นรูปโปรด ${count} รูปแล้ว ✓`);
+        });
+
+        document.getElementById('bulkDeleteSelectedBtn').addEventListener('click', async () => {
+          if (bulkSelectedIds.size === 0) {
+            showAppAlert('☑️ แตะเลือกรูปที่ต้องการลบก่อนนะคะ');
+            return;
+          }
+          const idsToDelete = Array.from(bulkSelectedIds);
+          const ok = window.confirm(
+            `ต้องการลบรูปที่เลือกทั้งหมด ${idsToDelete.length} รูปออกจากสมุดภาพใช่ไหมคะ?\n(ลบเฉพาะในสมุดภาพบนเว็บ ไฟล์ต้นฉบับในเครื่องของคุณจะไม่ถูกลบ)`
+          );
+          if (!ok) return;
+
+          const { all } = getActiveAlbumPhotos();
+          const mapById = new Map(all.map((p) => [p.id, p]));
+          for (const id of idsToDelete) {
+            const target = mapById.get(id);
+            if (target && !target.isSample) {
+              await deleteSinglePhotoRecord(target);
+            }
+          }
+          bulkSelectedIds.clear();
+          saveStateToLocalStorage(false);
+          renderGalleryAndStats();
+          await refreshCoupleAvatars();
+          showSaveToast(`🗑️ ลบรูปที่เลือก ${idsToDelete.length} รูปแล้ว ✓`);
+        });
+
+        document.getElementById('galleryRestoreDeletedBtn').addEventListener('click', () => {
+          const count = (state.removedLocalIds || []).length;
+          if (count === 0) return;
+          state.removedLocalIds = [];
+          saveStateToLocalStorage(false);
+          renderGalleryAndStats();
+          refreshCoupleAvatars();
+          showSaveToast(`♻️ กู้คืนรูปตั้งต้นทั้ง ${count} รูปกลับมาแล้ว ✓`);
+        });
+
+        /* --- C. Modal แก้ไขรูปและการ์ดโพลารอยด์ (#photoEditorModal) --- */
+        const editorModal = document.getElementById('photoEditorModal');
+        const editorCapInput = document.getElementById('editorCaptionInput');
+        const editorReplaceInput = document.getElementById('editorReplaceFileInput');
+
+        function getCurrentlyEditingPhoto() {
+          if (!currentEditingPhotoId) return null;
+          return getActiveAlbumPhotos().all.find((p) => p.id === currentEditingPhotoId) || null;
+        }
+
+        function refreshLightboxAfterPhotoMutation(preferPhotoId) {
+          if (!lightboxOpen) return;
+          lightboxList = getFilteredPhotos();
+          if (lightboxList.length === 0) {
+            closeLightbox();
+            return;
+          }
+          const idx = preferPhotoId ? lightboxList.findIndex((p) => p.id === preferPhotoId) : -1;
+          lightboxIndex = idx >= 0 ? idx : (lightboxIndex % lightboxList.length);
+          renderLightboxSlide();
+        }
+
+        document.getElementById('closePhotoEditorBtn').addEventListener('click', closePhotoEditorModal);
+        document.getElementById('editorCancelBtn').addEventListener('click', closePhotoEditorModal);
+        editorModal.addEventListener('click', (e) => {
+          if (e.target === editorModal) closePhotoEditorModal();
+        });
+
+        editorCapInput.addEventListener('input', () => {
+          if (!editorDraft) return;
+          editorDraft.caption = editorCapInput.value;
+          document.getElementById('editorPreviewCap').textContent = editorDraft.caption || 'แตะเพื่อเขียนความทรงจำ...';
+        });
+
+        document.querySelectorAll('[data-edit-folder]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!editorDraft) return;
+            editorDraft.folder = btn.dataset.editFolder === 'fan' ? 'fan' : 'Duo';
+            syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+          });
+        });
+
+        document.getElementById('editorRotateLeftBtn').addEventListener('click', () => {
+          if (!editorDraft) return;
+          editorDraft.rotate = (editorDraft.rotate + 270) % 360;
+          syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+        });
+
+        document.getElementById('editorRotateRightBtn').addEventListener('click', () => {
+          if (!editorDraft) return;
+          editorDraft.rotate = (editorDraft.rotate + 90) % 360;
+          syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+        });
+
+        document.querySelectorAll('[data-edit-fit]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!editorDraft) return;
+            editorDraft.fit = btn.dataset.editFit === 'contain' ? 'contain' : 'cover';
+            syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+          });
+        });
+
+        document.querySelectorAll('[data-edit-posy]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!editorDraft) return;
+            editorDraft.posY = btn.dataset.editPosy || '22%';
+            syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+          });
+        });
+
+        document.querySelectorAll('[data-edit-washi]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!editorDraft) return;
+            editorDraft.washi = btn.dataset.editWashi || 'auto';
+            syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+          });
+        });
+
+        document.getElementById('editorReplaceImgBtn').addEventListener('click', () => {
+          editorReplaceInput.click();
+        });
+
+        editorReplaceInput.addEventListener('change', async () => {
+          const file = editorReplaceInput.files && editorReplaceInput.files[0];
+          editorReplaceInput.value = '';
+          if (!file || !editorDraft) return;
+          try {
+            const resized = await resizeImageFileToJpegBlob(file, 1400, 0.85);
+            pendingReplacementBlob = resized;
+            editorDraft.previewSrc = createManagedObjectUrl('editor-temp-preview', resized);
+            syncPhotoEditorPreviewUI(getCurrentlyEditingPhoto());
+            showSaveToast('🖼️ เลือกรูปใหม่แล้ว กด “บันทึกการแก้ไข” เพื่อยืนยัน ✓');
+          } catch {
+            showAppAlert('⚠️ ไม่สามารถอ่านไฟล์รูปนี้ได้ กรุณาลองไฟล์ JPG, PNG หรือ WebP อื่นนะคะ');
+          }
+        });
+
+        document.getElementById('editorSaveBtn').addEventListener('click', async () => {
+          if (!currentEditingPhotoId || !editorDraft) return;
+          const photoId = currentEditingPhotoId;
+
+          state.captions[photoId] = editorDraft.caption.trim();
+          state.photoEdits = state.photoEdits || {};
+          state.photoEdits[photoId] = {
+            folder: editorDraft.folder,
+            rotate: editorDraft.rotate,
+            fit: editorDraft.fit,
+            posY: editorDraft.posY,
+            washi: editorDraft.washi
+          };
+
+          if (pendingReplacementBlob) {
+            await dbSavePhotoOverride(photoId, pendingReplacementBlob);
+            const newUrl = createManagedObjectUrl('override-' + photoId, pendingReplacementBlob);
+            overrideUrlsMap.set(photoId, newUrl);
+          }
+
+          saveStateToLocalStorage(false);
+          closePhotoEditorModal();
+          renderGalleryAndStats();
+          await refreshCoupleAvatars();
+          refreshLightboxAfterPhotoMutation(photoId);
+          showSaveToast('💾 บันทึกการแก้ไขการ์ดโพลารอยด์แล้ว ✓');
+        });
+
+        document.getElementById('editorResetOrigBtn').addEventListener('click', async () => {
+          if (!currentEditingPhotoId) return;
+          const ok = window.confirm('ต้องการคืนค่ารูปภาพ แคปชั่น และการตั้งค่าของการ์ดใบนี้กลับเป็นค่าเริ่มต้นใช่ไหมคะ?');
+          if (!ok) return;
+
+          const photoId = currentEditingPhotoId;
+          delete state.captions[photoId];
+          if (state.photoEdits) delete state.photoEdits[photoId];
+          if (overrideUrlsMap.has(photoId)) {
+            await dbDeletePhotoOverride(photoId);
+            revokeManagedObjectUrl('override-' + photoId);
+            overrideUrlsMap.delete(photoId);
+          }
+
+          saveStateToLocalStorage(false);
+          closePhotoEditorModal();
+          renderGalleryAndStats();
+          await refreshCoupleAvatars();
+          refreshLightboxAfterPhotoMutation(photoId);
+          showSaveToast('↺ คืนค่าการ์ดใบนี้เป็นค่าเริ่มต้นแล้ว ✓');
+        });
+
+        document.getElementById('editorDeletePhotoBtn').addEventListener('click', async () => {
+          if (!currentEditingPhotoId) return;
+          const photoId = currentEditingPhotoId;
+          const deleted = await handleDeletePhoto(photoId);
+          if (deleted) {
+            closePhotoEditorModal();
+            refreshLightboxAfterPhotoMutation(null);
+          }
+        });
+
+        /* --- D. ปุ่ม Escape สำหรับปิด Modal เพิ่มรูป / แก้ไขรูป --- */
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return;
+          if (editorModal.classList.contains('is-open')) {
+            e.preventDefault();
+            closePhotoEditorModal();
+          } else if (addModal.classList.contains('is-open')) {
+            e.preventDefault();
+            closeAddPhotoModal();
+          }
+        });
+      }
+
       async function bootScrapbookApp() {
         loadStateFromLocalStorage();
         applyTheme(state.theme);
@@ -6622,10 +7622,19 @@
             defaultCaption: (rec.name || '').replace(/\.[^/.]+$/, '') || 'ความทรงจำของเรา 💕'
           }));
 
+        const storedOverrides = await dbGetAllPhotoOverrides();
+        overrideUrlsMap.clear();
+        storedOverrides.forEach((ov) => {
+          if (ov && ov.id && ov.blob) {
+            overrideUrlsMap.set(ov.id, createManagedObjectUrl('override-' + ov.id, ov.blob));
+          }
+        });
+
         await probeLocalFolderAvailability();
 
         setupGalleryDelegation();
         setupLightboxEvents();
+        setupAllPhotosManagementModals();
         bindAllInteractions();
 
         renderAgesAndBirthdays(true);
